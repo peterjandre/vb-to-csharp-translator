@@ -1,6 +1,6 @@
 # VB.NET to C# Translator
 
-A web application that translates code between VB.NET and C# using a fine-tuned Hugging Face model. Built with FastAPI backend, Next.js frontend, and Docker for easy deployment.
+A web application that translates code between VB.NET and C# using a fine-tuned translation model. Built with FastAPI backend, Next.js frontend, and Docker for easy deployment.
 
 ## Features
 
