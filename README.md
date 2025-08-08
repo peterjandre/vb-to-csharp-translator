@@ -21,12 +21,13 @@ A web application that translates VB.NET code to C# using AI models.
 
 2. **Set up the development environment**
    ```bash
-   make setup
+   chmod +x setup.sh
+   ./setup.sh
    ```
 
 3. **Start the application**
    ```bash
-   make docker-up
+   docker-compose up --build
    ```
 
 4. **Access the application**
@@ -34,69 +35,14 @@ A web application that translates VB.NET code to C# using AI models.
    - Backend API: http://localhost:8000
    - API Documentation: http://localhost:8000/docs
 
-### Free Tier AWS Deployment
+### Production Deployment
 
-Deploy to AWS EC2 using the free tier (t3.micro instance):
+This application is designed to run on containerized environments. The repository includes:
+- Docker configuration for both frontend and backend
+- GitHub Actions workflow for automated deployment
+- Health checks and monitoring capabilities
 
-#### Option 1: Automated Setup (Recommended)
-
-1. **Install AWS CLI and configure credentials**
-   ```bash
-   aws configure
-   ```
-
-2. **Run the AWS setup script**
-   ```bash
-   chmod +x scripts/aws-setup.sh
-   ./scripts/aws-setup.sh
-   ```
-
-3. **SSH into your EC2 instance**
-   ```bash
-   ssh -i vb-to-csharp-key.pem ubuntu@YOUR_PUBLIC_IP
-   ```
-
-4. **Set up the EC2 instance**
-   ```bash
-   chmod +x scripts/setup-ec2.sh
-   ./scripts/setup-ec2.sh
-   ```
-
-5. **Configure GitHub Secrets**
-   Go to your GitHub repository → Settings → Secrets and variables → Actions, and add:
-   - `EC2_HOST`: Your EC2 public IP
-   - `EC2_USERNAME`: `ubuntu`
-   - `EC2_SSH_KEY`: Content of your `vb-to-csharp-key.pem` file
-
-6. **Deploy**
-   Push to the `main` branch to trigger automatic deployment.
-
-#### Option 2: Manual Setup
-
-1. **Launch EC2 instance**
-   - Instance type: `t3.micro` (free tier eligible)
-   - OS: Ubuntu 22.04 LTS
-   - Security group: Allow ports 22, 80, 443, 3000, 8000
-
-2. **SSH into the instance and run setup**
-   ```bash
-   ssh -i your-key.pem ubuntu@YOUR_PUBLIC_IP
-   chmod +x scripts/setup-ec2.sh
-   ./scripts/setup-ec2.sh
-   ```
-
-3. **Clone your repository**
-   ```bash
-   cd /home/ubuntu
-   git clone https://github.com/your-username/vb-to-csharp-translator.git
-   cd vb-to-csharp-translator
-   ```
-
-4. **Deploy manually**
-   ```bash
-   chmod +x scripts/deploy-ec2.sh
-   ./scripts/deploy-ec2.sh
-   ```
+For deployment instructions, please refer to your chosen hosting platform's documentation.
 
 ## Project Structure
 
@@ -104,45 +50,48 @@ Deploy to AWS EC2 using the free tier (t3.micro instance):
 vb-to-csharp-translator/
 ├── backend/                 # FastAPI backend
 │   ├── main.py             # Main application
-│   ├── requirements.txt    # Python dependencies
+│   ├── main-minimal.py     # Lightweight version for resource-constrained environments
+│   ├── requirements.txt    # Full Python dependencies
+│   ├── requirements-minimal.txt # Minimal dependencies
 │   └── Dockerfile         # Backend container
 ├── frontend/               # Next.js frontend
 │   ├── app/               # Next.js app directory
 │   ├── package.json       # Node.js dependencies
 │   └── Dockerfile         # Frontend container
-├── scripts/               # Deployment scripts
-│   ├── aws-setup.sh      # AWS infrastructure setup
-│   ├── setup-ec2.sh      # EC2 instance setup
-│   └── deploy-ec2.sh     # Deployment script
 ├── .github/workflows/     # GitHub Actions
 │   └── deploy.yml         # CI/CD pipeline
-├── docker-compose.yml     # Local development
-└── Makefile              # Development commands
+├── docker-compose.yml     # Container orchestration
+├── setup.sh              # Local development setup
+└── README.md             # Project documentation
 ```
 
 ## Development Commands
 
 ```bash
 # Set up development environment
-make setup
+chmod +x setup.sh
+./setup.sh
 
 # Start with Docker
-make docker-up
+docker-compose up --build
 
 # Stop Docker containers
-make docker-down
+docker-compose down
 
 # View logs
-make docker-logs
+docker-compose logs -f
 
 # Clean up
-make clean
+docker-compose down -v
+docker system prune -f
 
-# Install dependencies
-make install-deps
+# Install dependencies manually
+cd backend && python -m venv venv && source venv/bin/activate && pip install -r requirements.txt
+cd frontend && npm install
 
 # Check service status
-make status
+curl http://localhost:8000/health  # Backend health check
+curl http://localhost:3000         # Frontend check
 ```
 
 ## API Endpoints
@@ -189,14 +138,10 @@ For higher traffic, consider:
 # View application logs
 docker-compose logs -f
 
-# View EC2 monitoring logs
-tail -f /home/ubuntu/monitor.log
+# View individual service logs
+docker-compose logs -f backend
+docker-compose logs -f frontend
 ```
-
-### Backup and Recovery
-- Automatic backups created before each deployment
-- Manual backup: `tar -czf backup.tar.gz /home/ubuntu/vb-to-csharp-translator`
-- Restore: `tar -xzf backup.tar.gz`
 
 ## Troubleshooting
 
@@ -214,9 +159,9 @@ tail -f /home/ubuntu/monitor.log
    newgrp docker
    ```
 
-3. **EC2 instance not accessible**
-   - Check security group rules
-   - Verify key pair permissions: `chmod 400 your-key.pem`
+3. **Application not accessible**
+   - Check if containers are running: `docker-compose ps`
+   - Verify ports are not blocked by firewall
 
 4. **Deployment fails**
    ```bash
@@ -254,6 +199,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Support
 
 - **Issues**: Create an issue on GitHub
-- **Documentation**: Check the `/docs` endpoint
-- **Deployment**: Follow the free tier setup guide above 
-# Deployment Test
+- **Documentation**: Check the `/docs` endpoint at `http://localhost:8000/docs`
+- **API Reference**: Interactive API documentation available when running the application
