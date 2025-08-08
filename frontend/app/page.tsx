@@ -28,7 +28,7 @@ export default function Home() {
       const sourceLanguage = translationDirection === 'vb-to-csharp' ? 'vb' : 'csharp'
       const targetLanguage = translationDirection === 'vb-to-csharp' ? 'csharp' : 'vb'
 
-      const response = await fetch('http://localhost:8000/translate', {
+      const response = await fetch('http://34.204.84.67:8000/translate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
