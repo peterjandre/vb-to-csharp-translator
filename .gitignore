@@ -315,3 +315,6 @@ vb-to-csharp-key-new.pem
 
 # AWS configuration files
 aws-config.txt
+
+# Deployment scripts (contain AWS-specific configuration)
+scripts/
