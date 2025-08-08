@@ -309,5 +309,9 @@ logs
 
 # Local configuration files
 config.local.js
-config.local.json vb-to-csharp-key.pem
+config.local.json
+vb-to-csharp-key.pem
 vb-to-csharp-key-new.pem
+
+# AWS configuration files
+aws-config.txt
