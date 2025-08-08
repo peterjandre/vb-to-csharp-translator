@@ -1,256 +1,258 @@
 # VB.NET to C# Translator
 
-A web application that translates code between VB.NET and C# using a fine-tuned translation model. Built with FastAPI backend, Next.js frontend, and Docker for easy deployment.
+A web application that translates VB.NET code to C# using AI models.
 
 ## Features
 
-- Translate VB.NET code to C#
-- Translate C# code to VB.NET
-- Modern, responsive UI with Tailwind CSS
-- Local model inference using transformers
-- Copy translated code to clipboard
-- Swap translation direction easily
-- Docker-based deployment for easy setup
+- **VB.NET to C# Translation**: Convert VB.NET code to equivalent C# code
+- **Web Interface**: Modern, responsive web UI built with Next.js
+- **FastAPI Backend**: RESTful API with automatic documentation
+- **AI-Powered**: Uses Hugging Face transformers for accurate translations
+
+## Quick Start
+
+### Local Development
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/vb-to-csharp-translator.git
+   cd vb-to-csharp-translator
+   ```
+
+2. **Set up the development environment**
+   ```bash
+   make setup
+   ```
+
+3. **Start the application**
+   ```bash
+   make docker-up
+   ```
+
+4. **Access the application**
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:8000
+   - API Documentation: http://localhost:8000/docs
+
+### Free Tier AWS Deployment
+
+Deploy to AWS EC2 using the free tier (t3.micro instance):
+
+#### Option 1: Automated Setup (Recommended)
+
+1. **Install AWS CLI and configure credentials**
+   ```bash
+   aws configure
+   ```
+
+2. **Run the AWS setup script**
+   ```bash
+   chmod +x scripts/aws-setup.sh
+   ./scripts/aws-setup.sh
+   ```
+
+3. **SSH into your EC2 instance**
+   ```bash
+   ssh -i vb-to-csharp-key.pem ubuntu@YOUR_PUBLIC_IP
+   ```
+
+4. **Set up the EC2 instance**
+   ```bash
+   chmod +x scripts/setup-ec2.sh
+   ./scripts/setup-ec2.sh
+   ```
+
+5. **Configure GitHub Secrets**
+   Go to your GitHub repository → Settings → Secrets and variables → Actions, and add:
+   - `EC2_HOST`: Your EC2 public IP
+   - `EC2_USERNAME`: `ubuntu`
+   - `EC2_SSH_KEY`: Content of your `vb-to-csharp-key.pem` file
+
+6. **Deploy**
+   Push to the `main` branch to trigger automatic deployment.
+
+#### Option 2: Manual Setup
+
+1. **Launch EC2 instance**
+   - Instance type: `t3.micro` (free tier eligible)
+   - OS: Ubuntu 22.04 LTS
+   - Security group: Allow ports 22, 80, 443, 3000, 8000
+
+2. **SSH into the instance and run setup**
+   ```bash
+   ssh -i your-key.pem ubuntu@YOUR_PUBLIC_IP
+   chmod +x scripts/setup-ec2.sh
+   ./scripts/setup-ec2.sh
+   ```
+
+3. **Clone your repository**
+   ```bash
+   cd /home/ubuntu
+   git clone https://github.com/your-username/vb-to-csharp-translator.git
+   cd vb-to-csharp-translator
+   ```
+
+4. **Deploy manually**
+   ```bash
+   chmod +x scripts/deploy-ec2.sh
+   ./scripts/deploy-ec2.sh
+   ```
 
 ## Project Structure
 
 ```
 vb-to-csharp-translator/
 ├── backend/                 # FastAPI backend
-│   ├── main.py             # Main FastAPI application
-│   ├── Dockerfile          # Backend Docker configuration
-│   ├── .dockerignore       # Docker ignore file
-│   ├── requirements.txt    # Backend Python dependencies
-│   └── env.example         # Environment variables template
+│   ├── main.py             # Main application
+│   ├── requirements.txt    # Python dependencies
+│   └── Dockerfile         # Backend container
 ├── frontend/               # Next.js frontend
-│   ├── app/                # Next.js app directory
-│   ├── Dockerfile          # Frontend Docker configuration
-│   ├── .dockerignore       # Docker ignore file
-│   ├── package.json        # Frontend dependencies
-│   └── ...                 # Other Next.js files
-├── docker-compose.yml      # Docker Compose configuration
-└── README.md              # This file
+│   ├── app/               # Next.js app directory
+│   ├── package.json       # Node.js dependencies
+│   └── Dockerfile         # Frontend container
+├── scripts/               # Deployment scripts
+│   ├── aws-setup.sh      # AWS infrastructure setup
+│   ├── setup-ec2.sh      # EC2 instance setup
+│   └── deploy-ec2.sh     # Deployment script
+├── .github/workflows/     # GitHub Actions
+│   └── deploy.yml         # CI/CD pipeline
+├── docker-compose.yml     # Local development
+└── Makefile              # Development commands
 ```
 
-## Quick Start with Docker
-
-### Prerequisites
-
-- Docker
-- Docker Compose
-
-### Running the Application
-
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd vb-to-csharp-translator
-   ```
-
-2. Start the application using Docker Compose:
-   ```bash
-   docker-compose up --build
-   ```
-
-   This will:
-   - Build and start the FastAPI backend on `http://localhost:8000`
-   - Build and start the Next.js frontend on `http://localhost:3000`
-   - Download and cache the model locally (first run may take several minutes)
-
-3. Access the application:
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:8000
-   - API Documentation: http://localhost:8000/docs
-
-### Stopping the Application
+## Development Commands
 
 ```bash
-docker-compose down
+# Set up development environment
+make setup
+
+# Start with Docker
+make docker-up
+
+# Stop Docker containers
+make docker-down
+
+# View logs
+make docker-logs
+
+# Clean up
+make clean
+
+# Install dependencies
+make install-deps
+
+# Check service status
+make status
 ```
-
-## Manual Setup (Alternative)
-
-### Prerequisites
-
-- Python 3.11+
-- Node.js 18+
-- Git
-
-### Backend Setup
-
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-
-2. Create a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. Install dependencies:
-   ```bash
-   pip install -r ../requirements.txt
-   ```
-
-4. Set up environment variables:
-   ```bash
-   cp env.example .env
-   ```
-   
-   Edit `.env` and configure your model:
-   ```
-   MODEL_NAME=Helsinki-NLP/opus-mt-en-fr
-   ```
-
-5. Start the backend server:
-   ```bash
-   python main.py
-   ```
-   
-   The backend will run on `http://localhost:8000`
-
-### Frontend Setup
-
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-   
-   The frontend will run on `http://localhost:3000`
-
-## Usage
-
-1. Open your browser and navigate to `http://localhost:3000`
-2. Choose the translation direction (VB.NET → C# or C# → VB.NET)
-3. Enter your code in the input textarea
-4. Click "Translate" to get the translated code
-5. Use the "Copy to Clipboard" button to copy the translated code
-6. Use the "Swap" button to switch the input and output
 
 ## API Endpoints
 
-### GET /health
-
-Health check endpoint to verify the service is running and the model is loaded.
-
-**Response:**
-```json
-{
-  "status": "healthy",
-  "model_loaded": true,
-  "tokenizer_loaded": true
-}
-```
-
-### POST /translate
-
-Translates code between VB.NET and C#.
-
-**Request Body:**
-```json
-{
-  "code": "string",
-  "source_language": "vb" | "csharp",
-  "target_language": "csharp" | "vb"
-}
-```
-
-**Response:**
-```json
-{
-  "translated_code": "string",
-  "source_language": "string",
-  "target_language": "string"
-}
-```
+- `GET /health` - Health check
+- `POST /translate` - Translate VB.NET to C#
+- `GET /docs` - API documentation (Swagger UI)
 
 ## Configuration
 
-### Model Configuration
+### Environment Variables
 
-The application uses the Hugging Face transformers library to load models locally. You can configure the model by setting the `MODEL_NAME` environment variable:
+Create a `.env` file in the `backend/` directory:
 
-```bash
-MODEL_NAME=Helsinki-NLP/opus-mt-en-fr
+```env
+# Hugging Face API (optional, for private models)
+HUGGINGFACE_API_KEY=your_api_key_here
+
+# Model configuration
+MODEL_NAME=microsoft/DialoGPT-medium
 ```
 
-### Model Requirements
+## Cost Optimization
 
-The model should be:
-- A causal language model (like GPT-style models)
-- Fine-tuned for code translation between VB.NET and C#
-- Available on Hugging Face Hub
+### Free Tier Deployment
+- **EC2 t3.micro**: Free for 12 months (750 hours/month)
+- **Estimated cost**: $0 after free tier
+- **Performance**: Suitable for development and small-scale usage
 
-### Performance Considerations
+### Production Scaling
+For higher traffic, consider:
+- **EC2 t3.small**: ~$8.50/month
+- **Load Balancer**: ~$16/month
+- **Auto Scaling**: Based on demand
 
-- First startup may take several minutes to download the model
-- Model is cached locally for subsequent runs
-- GPU acceleration is automatically used if available
-- Memory usage depends on model size
+## Monitoring
 
-## Development
+### Health Checks
+- Backend: `http://your-domain:8000/health`
+- Frontend: `http://your-domain:3000`
 
-### Backend Development
-
-- The FastAPI backend includes CORS configuration for local development
-- API documentation is available at `http://localhost:8000/docs`
-- Model is loaded once at startup and reused for all requests
-- Includes comprehensive error handling and logging
-
-### Frontend Development
-
-- Built with Next.js 14 and TypeScript
-- Uses Tailwind CSS for styling
-- Responsive design that works on desktop and mobile
-- Real-time error handling and loading states
-
-### Docker Development
-
-For development with Docker:
-
+### Logs
 ```bash
-# Start services in development mode
-docker-compose up --build
-
-# View logs
+# View application logs
 docker-compose logs -f
 
-# Stop services
-docker-compose down
-
-# Rebuild and restart
-docker-compose up --build --force-recreate
+# View EC2 monitoring logs
+tail -f /home/ubuntu/monitor.log
 ```
 
-## Deployment
-
-### Environment Variables for Production
-
-Set these environment variables in your Railway project:
-
-- `MODEL_NAME`: The Hugging Face model to use
-- `HOST`: Server host (usually 0.0.0.0)
-- `PORT`: Server port (Railway will set this)
+### Backup and Recovery
+- Automatic backups created before each deployment
+- Manual backup: `tar -czf backup.tar.gz /home/ubuntu/vb-to-csharp-translator`
+- Restore: `tar -xzf backup.tar.gz`
 
 ## Troubleshooting
 
-1. **Model Download Issues**: Check your internet connection and ensure the model name is correct
-2. **Memory Issues**: Use a smaller model or increase your system's available memory
-3. **CORS Errors**: Ensure the backend is running on port 8000 and the frontend is running on port 3000
-4. **Translation Errors**: Verify your model is properly fine-tuned for code translation
+### Common Issues
+
+1. **Port already in use**
+   ```bash
+   sudo lsof -i :3000  # Check what's using port 3000
+   docker-compose down  # Stop containers
+   ```
+
+2. **Docker permission denied**
+   ```bash
+   sudo usermod -aG docker $USER
+   newgrp docker
+   ```
+
+3. **EC2 instance not accessible**
+   - Check security group rules
+   - Verify key pair permissions: `chmod 400 your-key.pem`
+
+4. **Deployment fails**
+   ```bash
+   # Check logs
+   docker-compose logs
+   
+   # Restart services
+   docker-compose restart
+   ```
+
+### Performance Optimization
+
+1. **Reduce memory usage**
+   - Use smaller models
+   - Enable model caching
+   - Optimize Docker images
+
+2. **Improve response time**
+   - Use model quantization
+   - Implement request caching
+   - Consider CDN for static assets
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
 ## License
 
-This project is open source and available under the MIT License. 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Support
+
+- **Issues**: Create an issue on GitHub
+- **Documentation**: Check the `/docs` endpoint
+- **Deployment**: Follow the free tier setup guide above 
