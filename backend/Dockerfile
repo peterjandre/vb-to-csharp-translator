@@ -14,11 +14,9 @@ COPY requirements-minimal.txt .
 # Install Python dependencies with optimizations for smaller size
 RUN pip install --no-cache-dir -r requirements-minimal.txt
 
-# Copy application code
-COPY . .
-
-# Use minimal version for free tier deployment
-RUN cp main-minimal.py main.py
+# Copy minimal application code
+COPY main-minimal.py ./main.py
+COPY env.example .
 
 # Create directory for model cache
 RUN mkdir -p /app/.cache/huggingface
