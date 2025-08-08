@@ -310,3 +310,4 @@ logs
 # Local configuration files
 config.local.js
 config.local.json vb-to-csharp-key.pem
+vb-to-csharp-key-new.pem
