@@ -5,20 +5,20 @@ WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    build-essential \
     curl \
-    software-properties-common \
-    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
-COPY requirements.txt .
+COPY requirements-minimal.txt .
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Python dependencies with optimizations for smaller size
+RUN pip install --no-cache-dir -r requirements-minimal.txt
 
 # Copy application code
 COPY . .
+
+# Use minimal version for free tier deployment
+RUN cp main-minimal.py main.py
 
 # Create directory for model cache
 RUN mkdir -p /app/.cache/huggingface
