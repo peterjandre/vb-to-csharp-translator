@@ -39,6 +39,10 @@ jobs:
           docker system prune -f
           docker volume prune -f
           
+          # Set API URL for frontend
+          export API_URL="http://$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4):8000"
+          echo "Using API_URL: $API_URL"
+          
           # Build and start containers
           docker-compose up -d --build
           
