@@ -13,13 +13,21 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
+    - name: Debug secrets
+      run: |
+        echo "Host: ${{ secrets.EC2_HOST }}"
+        echo "Username: ${{ secrets.EC2_USERNAME }}"
+        echo "Key length: ${#EC2_SSH_KEY}"
+      env:
+        EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+      
     - name: Deploy to EC2
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
-        port: ${{ secrets.EC2_PORT || 22 }}
+        port: 22
         script: |
           # Navigate to project directory
           cd /home/ubuntu/vb-to-csharp-translator
