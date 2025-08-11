@@ -174,7 +174,4 @@ async def translate_code(request: TranslationRequest):
         logger.error(f"Translation error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Translation error: {str(e)}")
 
-# Vercel serverless function handler
-def handler(request, context):
-    """Vercel serverless function handler"""
-    return app(request, context)
+
