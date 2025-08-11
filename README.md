@@ -19,15 +19,21 @@ A web application that translates VB.NET code to C# using AI models.
    cd vb-to-csharp-translator
    ```
 
-2. **Set up the development environment**
+2. **Set up the backend**
    ```bash
-   chmod +x setup.sh
-   ./setup.sh
+   cd backend
+   pip install -r requirements.txt
+   # Copy and configure your .env file
+   cp env.example .env
+   # Edit .env with your Hugging Face API token and model name
+   uvicorn api.index:app --reload --host 0.0.0.0 --port 8000
    ```
 
-3. **Start the application**
+3. **Set up the frontend**
    ```bash
-   docker-compose up --build
+   cd frontend
+   npm install
+   npm run dev
    ```
 
 4. **Access the application**
@@ -37,57 +43,48 @@ A web application that translates VB.NET code to C# using AI models.
 
 ### Production Deployment
 
-This application is designed to run on containerized environments. The repository includes:
-- Docker configuration for both frontend and backend
-- GitHub Actions workflow for automated deployment
-- Health checks and monitoring capabilities
+This application is now deployed using:
+- **Frontend**: GitHub Pages
+- **Backend**: Vercel (with Hugging Face Inference API integration)
+- **AI Model**: Hugging Face Inference API with fine-tuned model
 
-For deployment instructions, please refer to your chosen hosting platform's documentation.
+For deployment instructions, see the individual component documentation in their respective directories.
 
 ## Project Structure
 
 ```
 vb-to-csharp-translator/
-├── backend/                 # FastAPI backend
-│   ├── main.py             # Main application
-│   ├── main-minimal.py     # Lightweight version for resource-constrained environments
-│   ├── requirements.txt    # Full Python dependencies
-│   ├── requirements-minimal.txt # Minimal dependencies
-│   └── Dockerfile         # Backend container
-├── frontend/               # Next.js frontend
-│   ├── app/               # Next.js app directory
-│   ├── package.json       # Node.js dependencies
-│   └── Dockerfile         # Frontend container
-├── .github/workflows/     # GitHub Actions
-│   └── deploy.yml         # CI/CD pipeline
-├── docker-compose.yml     # Container orchestration
-├── setup.sh              # Local development setup
-└── README.md             # Project documentation
+├── backend/                 # Vercel serverless backend
+│   ├── api/                # API functions
+│   │   └── index.py        # Main API endpoint
+│   ├── vercel.json         # Vercel configuration
+│   ├── requirements.txt        # Python dependencies
+│   └── env.example         # Environment variables template
+├── frontend/               # Next.js frontend (GitHub Pages)
+│   ├── app/                # Next.js app directory
+│   ├── package.json        # Node.js dependencies
+│   ├── next.config.js      # Next.js configuration
+│   └── .github/workflows/  # GitHub Actions
+│       └── deploy.yml      # GitHub Pages deployment
+└── README.md              # Project documentation
 ```
 
 ## Development Commands
 
 ```bash
-# Set up development environment
-chmod +x setup.sh
-./setup.sh
+# Backend development
+cd backend
+pip install -r requirements.txt
+uvicorn api.index:app --reload --host 0.0.0.0 --port 8000
 
-# Start with Docker
-docker-compose up --build
+# Frontend development
+cd frontend
+npm install
+npm run dev
 
-# Stop Docker containers
-docker-compose down
-
-# View logs
-docker-compose logs -f
-
-# Clean up
-docker-compose down -v
-docker system prune -f
-
-# Install dependencies manually
-cd backend && python -m venv venv && source venv/bin/activate && pip install -r requirements.txt
-cd frontend && npm install
+# Build frontend for production
+cd frontend
+npm run build
 
 # Check service status
 curl http://localhost:8000/health  # Backend health check
@@ -104,44 +101,50 @@ curl http://localhost:3000         # Frontend check
 
 ### Environment Variables
 
-Create a `.env` file in the `backend/` directory:
+For local development, create a `.env` file in the `backend/` directory:
 
-```env
-# Hugging Face API (optional, for private models)
-HUGGINGFACE_API_KEY=your_api_key_here
+```bash
+# Copy the example file
+cp backend/env.example backend/.env
 
-# Model configuration
-MODEL_NAME=microsoft/DialoGPT-medium
-```
+# Edit .env with your actual values:
+HUGGINGFACE_API_TOKEN=your_api_key_here
+    HUGGINGFACE_MODEL_NAME=HuggingFaceTB/SmolLM3-3B  # or another text generation model
+  ```
+  
+  **Demo Model**: This application uses `HuggingFaceTB/SmolLM3-3B` for demonstration purposes.
+  
+  **For Production Use**: Consider fine-tuning your own specialized VB.NET ↔ C# translation model for better accuracy and performance. You can:
+  - Fine-tune on a large dataset of VB.NET/C# code pairs
+  - Use models like `microsoft/DialoGPT-medium` or `meta-llama/Llama-2-7b-chat-hf` as base models
+  - Deploy your fine-tuned model to Hugging Face and update the `HUGGINGFACE_MODEL_NAME` environment variable
+  
+  For production deployment on Vercel, set these as environment variables in your Vercel project settings.
 
 ## Cost Optimization
 
 ### Free Tier Deployment
-- **EC2 t3.micro**: Free for 12 months (750 hours/month)
-- **Estimated cost**: $0 after free tier
-- **Performance**: Suitable for development and small-scale usage
+- **GitHub Pages**: Free hosting for frontend
+- **Vercel**: Free tier includes 100GB-hours/month serverless functions
+- **Hugging Face**: Free inference API calls (with limits)
+- **Estimated cost**: $0 for moderate usage
 
 ### Production Scaling
 For higher traffic, consider:
-- **EC2 t3.small**: ~$8.50/month
-- **Load Balancer**: ~$16/month
-- **Auto Scaling**: Based on demand
+- **Vercel Pro**: $20/month for increased limits
+- **Hugging Face Pro**: $9/month for increased API limits
+- **Custom domain**: ~$10-15/year
 
 ## Monitoring
 
 ### Health Checks
-- Backend: `http://your-domain:8000/health`
-- Frontend: `http://your-domain:3000`
+- Backend: `https://your-vercel-app.vercel.app/health`
+- Frontend: `https://your-username.github.io/vb-to-csharp-translator`
 
 ### Logs
-```bash
-# View application logs
-docker-compose logs -f
-
-# View individual service logs
-docker-compose logs -f backend
-docker-compose logs -f frontend
-```
+- **Vercel**: View logs in Vercel dashboard
+- **GitHub Pages**: Deployment logs in GitHub Actions
+- **Local development**: Check terminal output
 
 ## Troubleshooting
 
@@ -150,39 +153,35 @@ docker-compose logs -f frontend
 1. **Port already in use**
    ```bash
    sudo lsof -i :3000  # Check what's using port 3000
-   docker-compose down  # Stop containers
+   sudo lsof -i :8000  # Check what's using port 8000
    ```
 
-2. **Docker permission denied**
-   ```bash
-   sudo usermod -aG docker $USER
-   newgrp docker
-   ```
+2. **Hugging Face API errors**
+   - Verify your API token is valid
+   - Check if your model is accessible
+   - Ensure you have sufficient API credits
 
-3. **Application not accessible**
-   - Check if containers are running: `docker-compose ps`
-   - Verify ports are not blocked by firewall
+3. **Vercel deployment fails**
+   - Check Vercel logs in dashboard
+   - Verify environment variables are set
+   - Ensure requirements.txt is up to date
 
-4. **Deployment fails**
-   ```bash
-   # Check logs
-   docker-compose logs
-   
-   # Restart services
-   docker-compose restart
-   ```
+4. **GitHub Pages deployment fails**
+   - Check GitHub Actions logs
+   - Verify repository settings
+   - Ensure Next.js build succeeds
 
 ### Performance Optimization
 
-1. **Reduce memory usage**
-   - Use smaller models
-   - Enable model caching
-   - Optimize Docker images
+1. **Reduce API costs**
+   - Implement request caching
+   - Use model quantization
+   - Optimize prompt length
 
 2. **Improve response time**
-   - Use model quantization
-   - Implement request caching
-   - Consider CDN for static assets
+   - Use Vercel's global CDN
+   - Implement client-side caching
+   - Optimize Hugging Face API calls
 
 ## Contributing
 
@@ -199,5 +198,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Support
 
 - **Issues**: Create an issue on GitHub
-- **Documentation**: Check the `/docs` endpoint at `http://localhost:8000/docs`
-- **API Reference**: Interactive API documentation available when running the application
+- **Documentation**: Check the `/docs` endpoint at `http://localhost:8000/docs` (local development)
+- **API Reference**: Interactive API documentation available when running the application locally

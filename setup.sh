@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 Setting up VB.NET to C# Translator..."
+echo "🧹 Setting up clean VB.NET to C# Translator environment..."
 
 # Check if Python is installed
 if ! command -v python3 &> /dev/null; then
@@ -8,24 +8,20 @@ if ! command -v python3 &> /dev/null; then
     exit 1
 fi
 
-# Check if Node.js is installed
-if ! command -v node &> /dev/null; then
-    echo "❌ Node.js is not installed. Please install Node.js 18+ first."
-    exit 1
-fi
+echo "✅ Python 3 found"
 
-echo "✅ Prerequisites check passed"
+# Create clean virtual environment
+echo "📦 Creating clean virtual environment..."
+python3 -m venv .venv
 
-# Backend setup
-echo "📦 Setting up backend..."
+# Activate virtual environment
+echo "🔧 Activating virtual environment..."
+source .venv/bin/activate
+
+# Install dependencies
+echo "📥 Installing dependencies..."
 cd backend
-
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate
-
-# Install Python dependencies
-pip install -r ../requirements.txt
+pip install -r requirements.txt
 
 # Create .env file if it doesn't exist
 if [ ! -f .env ]; then
@@ -35,21 +31,14 @@ fi
 
 cd ..
 
-# Frontend setup
-echo "📦 Setting up frontend..."
-cd frontend
-
-# Install Node.js dependencies
-npm install
-
-cd ..
-
-echo "✅ Setup complete!"
+echo ""
+echo "✅ Clean setup complete!"
 echo ""
 echo "📋 Next steps:"
-echo "1. Edit backend/.env with your Hugging Face API credentials"
-echo "2. Start the backend: cd backend && python main.py"
-echo "3. Start the frontend: cd frontend && npm run dev"
-echo "4. Open http://localhost:3000 in your browser"
+echo "1. Edit backend/.env with your Hugging Face API token and model name"
+echo "2. Activate the environment: source .venv/bin/activate"
+echo "3. Start the backend: cd backend && uvicorn api.index:app --reload --host 0.0.0.0 --port 8000"
+echo "4. Start the frontend: cd frontend && npm run dev"
+echo "5. Test the setup: python3 test_setup.py"
 echo ""
-echo "🎉 Happy coding!" 
+echo "🎉 Happy coding!"

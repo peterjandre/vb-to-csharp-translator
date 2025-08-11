@@ -28,6 +28,7 @@ export default function Home() {
       const sourceLanguage = translationDirection === 'vb-to-csharp' ? 'vb' : 'csharp'
       const targetLanguage = translationDirection === 'vb-to-csharp' ? 'csharp' : 'vb'
 
+      // Use environment variable for production, fallback to localhost for development
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
       const response = await fetch(`${apiUrl}/translate`, {
         method: 'POST',
@@ -66,11 +67,23 @@ export default function Home() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+            <div className="flex items-center justify-center mb-2">
+              <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                DEMO VERSION
+              </span>
+            </div>
+            <p className="text-yellow-800 text-sm">
+              This is a demo application using a general-purpose AI model. 
+              <br />
+              For production use, a specialized VB.NET ↔ C# translation model would provide more accurate results.
+            </p>
+          </div>
           <h1 className="text-4xl font-bold text-gray-800 mb-2">
             VB.NET ↔ C# Translator
           </h1>
           <p className="text-gray-600">
-            Translate your code between VB.NET and C# using AI
+            Demo: Translate your code between VB.NET and C# using AI
           </p>
         </div>
 
@@ -126,7 +139,7 @@ export default function Home() {
               disabled={isLoading || !inputCode.trim()}
               className="mt-4 w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white font-medium py-3 px-6 rounded-lg transition-colors"
             >
-              {isLoading ? 'Translating...' : 'Translate'}
+              {isLoading ? 'Translating...' : 'Translate (Demo)'}
             </button>
           </div>
 
@@ -163,9 +176,24 @@ export default function Home() {
         {isLoading && (
           <div className="mt-6 text-center">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-            <p className="mt-2 text-gray-600">Translating your code...</p>
+            <p className="mt-2 text-gray-600">Translating your code (Demo Model)...</p>
           </div>
         )}
+
+        {/* Demo Footer */}
+        <div className="mt-8 text-center">
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">About This Demo</h3>
+            <p className="text-gray-600 text-sm mb-3">
+              This demo showcases the VB.NET ↔ C# translator interface and workflow. 
+              The translation quality may vary as it uses a general-purpose AI model rather than a specialized code translation model.
+            </p>
+            <div className="text-xs text-gray-500">
+              <p>• Production version would use a fine-tuned VB.NET ↔ C# translation model</p>
+              <p>• Demo model: General-purpose text generation (limited code-specific knowledge)</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

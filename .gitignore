@@ -323,3 +323,4 @@ scripts/
 # Deployment documentation and build files (contain environment-specific details)
 DEPLOYMENT.md
 Makefile
+

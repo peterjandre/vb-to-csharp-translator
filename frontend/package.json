@@ -2,11 +2,14 @@
   "name": "vb-csharp-translator-frontend",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://peterjandre.github.io/vb-to-csharp-translator",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "export": "next build",
+    "deploy": "npm run build && touch out/.nojekyll"
   },
   "dependencies": {
     "next": "^15.4.5",
