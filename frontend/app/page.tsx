@@ -76,7 +76,15 @@ export default function Home() {
             <p className="text-yellow-800 text-sm">
               This is a demo application using a general-purpose AI model. 
               <br />
-              For production use, a specialized VB.NET ↔ C# translation model would provide more accurate results.
+              See my fine-tuned model in action at{' '}
+              <a 
+                href="https://huggingface.co/spaces/peterjandre/vbnet-to-csharp-converter" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="underline hover:text-yellow-900 font-medium"
+              >
+                this Hugging Face Space
+              </a>.
             </p>
           </div>
           <h1 className="text-4xl font-bold text-gray-800 mb-2">
@@ -189,7 +197,16 @@ export default function Home() {
               The translation quality may vary as it uses a general-purpose AI model rather than a specialized code translation model.
             </p>
             <div className="text-xs text-gray-500">
-              <p>• Production version would use a fine-tuned VB.NET ↔ C# translation model</p>
+              <p>• Check out my{' '}
+                <a 
+                  href="https://huggingface.co/spaces/peterjandre/vbnet-to-csharp-converter" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="underline hover:text-gray-700"
+                >
+                  fine-tuned VB.NET ↔ C# translation model on Hugging Face
+                </a>
+              </p>
               <p>• Demo model: General-purpose text generation (limited code-specific knowledge)</p>
             </div>
           </div>
