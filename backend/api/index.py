@@ -4,7 +4,6 @@ from pydantic import BaseModel
 import os
 import logging
 import requests
-import json
 from typing import Optional
 from dotenv import load_dotenv
 
